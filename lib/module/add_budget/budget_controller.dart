@@ -6,6 +6,10 @@ class BudgetController extends GetxController{
   Rx<BudgetModel> bm = BudgetModel().obs;
   RxList<BudgetModel> bmList = <BudgetModel>[].obs;
 
+  RxInt i=0.obs;
+  RxString s="".obs;
+
+
   TextEditingController price=TextEditingController();
 
 }
