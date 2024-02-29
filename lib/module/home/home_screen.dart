@@ -1,5 +1,8 @@
+import 'package:budget_tracker/module/database/db_helper.dart';
+import 'package:budget_tracker/module/database/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sqflite/sqflite.dart';
 
 import 'home_controller.dart';
 
@@ -10,42 +13,87 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Budget Tracker")),
-      body: Column(
-        children: [
-          Obx(
-            () {
-              return Text(
-                "${controller.name.value} ${controller.count.value}",
-                style: TextStyle(fontSize: 30),
-              );
+    return DefaultTabController(
+      length: 2,
+      child: Builder(builder: (context) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Budget Tracker"),
+            bottom: TabBar(
+              tabs: [
+                Tab(text: "Income"),
+                Tab(text: "Expanse"),
+              ],
+              onTap: (value) {
+                controller.pageController.animateToPage(
+                  value,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                );
+              },
+            ),
+          ),
+          body: PageView(
+            controller: controller.pageController,
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              Incomes(),
+              Expanse(),
+            ],
+            onPageChanged: (value) {
+              // DefaultTabController.of(context).index=value;
+              DefaultTabController.of(context).animateTo(value);
             },
           ),
-          ElevatedButton(onPressed: () {
-            controller.count.value++;
-          }, child: Text("+")),
-          ElevatedButton(onPressed: () {
-            controller.count.value--;
-          }, child: Text("-")),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              DbHelper helper = DbHelper();
+              // helper.insertUserData(UserModel(
+              //   name: "flutter",
+              //   number: "569825330",
+              //   date: DateTime.now().toString(),
+              //   password: "123456",
+              // ));
+              helper.deleteUserData(1);
+            },
+          ),
+        );
+      }),
+    );
+  }
+}
 
-          controller.name.value = "Hey";
+class Incomes extends StatelessWidget {
+  List list = [];
 
-          // print(Theme.of(context).brightness==  Brightness.dark);
-          // // Get.isDarkMode
-          // if(Get.isDarkMode){
-          //   Get.changeThemeMode(ThemeMode.light);
-          // }else{
-          //   Get.changeThemeMode(ThemeMode.dark);
-          // }
+  Incomes({super.key});
 
-          controller.gotoAddBudget();
-        },
-      ),
+  @override
+  Widget build(BuildContext context) {
+    if (list.isEmpty) {
+      return Center(child: Text("No Data Found"));
+    }
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text("Income"),
+        );
+      },
+    );
+  }
+}
+
+class Expanse extends StatelessWidget {
+  const Expanse({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text("Expanse"),
+        );
+      },
     );
   }
 }

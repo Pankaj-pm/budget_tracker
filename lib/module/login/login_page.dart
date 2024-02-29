@@ -20,8 +20,8 @@ class LoginPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
-                controller: controller.name,
-                decoration: const InputDecoration(hintText: "User Name", border: OutlineInputBorder()),
+                controller: controller.number,
+                decoration: const InputDecoration(hintText: "number", border: OutlineInputBorder()),
               ),
               SizedBox(
                 height: 20,
