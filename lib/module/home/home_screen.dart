@@ -1,3 +1,4 @@
+import 'package:budget_tracker/module/add_budget/add_budget.dart';
 import 'package:budget_tracker/module/database/db_helper.dart';
 import 'package:budget_tracker/module/database/user_model.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,8 @@ class HomePage extends StatelessWidget {
               //   date: DateTime.now().toString(),
               //   password: "123456",
               // ));
-              helper.deleteUserData(1);
+              // helper.deleteUserData(1);
+              Get.to(AddBudgetPage());
             },
           ),
         );

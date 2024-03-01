@@ -20,10 +20,10 @@ class DbHelper{
   Future initDb()async {
     database= await openDatabase(
       dbName,
-      version: 3,
+      version: 1,
       onCreate: (db, version) async{
         await db.execute(
-          'CREATE TABLE $userTableName (id INTEER NOT NULL,name TEXT NOT NULL,number	TEXT NOT NULL UNIQUE,date TEXT NOT NULL,password TEXT NOT NULL,PRIMARY KEY(id AUTOINCREMENT))',
+          'CREATE TABLE $userTableName (id INTEGER NOT NULL,name TEXT NOT NULL,number	TEXT NOT NULL UNIQUE,date TEXT NOT NULL,password TEXT NOT NULL,PRIMARY KEY(id AUTOINCREMENT))',
         );
 
         await db.execute(
@@ -38,6 +38,14 @@ class DbHelper{
     var database = await openDatabase(dbName);
 
     database.insert("user", userModel.toJson());
+    // await database.execute('INSERT INTO "user"("name","number","date","password") VALUES ("abc","8869964","${DateTime.now()}","123456")');
+    database.close();
+  }
+
+  Future insertBudget(UserModel userModel) async{
+    var database = await openDatabase(dbName);
+
+    database.insert("balance", userModel.toJson());
     // await database.execute('INSERT INTO "user"("name","number","date","password") VALUES ("abc","8869964","${DateTime.now()}","123456")');
     database.close();
   }

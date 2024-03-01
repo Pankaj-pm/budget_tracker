@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'login_controller.dart';
 
 class LoginPage extends StatelessWidget {
+  LoginController controller = Get.put(LoginController());
 
-  LoginController controller=Get.put(LoginController());
   LoginPage({super.key});
 
   @override
@@ -34,9 +34,21 @@ class LoginPage extends StatelessWidget {
               SizedBox(
                 height: 50,
               ),
-              ElevatedButton(
-                onPressed: controller.gotoHome,
-                child: Text("Login"),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: controller.login,
+                      child: Text("Login"),
+                    ),
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: controller.reg,
+                      child: Text("Register"),
+                    ),
+                  ),
+                ],
               )
             ],
           ),
