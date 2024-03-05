@@ -1,3 +1,4 @@
+import 'package:budget_tracker/module/add_budget/budget_model.dart';
 import 'package:budget_tracker/module/database/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -14,6 +15,7 @@ class DbHelper{
   static DbHelper get instance=>_obj;
 
   final String userTableName="user";
+  final String balanceTableName="balance";
 
   Database? database;
 
@@ -27,7 +29,7 @@ class DbHelper{
         );
 
         await db.execute(
-          '''CREATE TABLE "balance" ("id"	INTEGER NOT NULL,"type"	TEXT NOT NULL,"amount"	NUMERIC NOT NULL DEFAULT 0,"date"	TEXT NOT NULL,"note"	TEXT,"user_id" INTEGER NOT NULL,"category" TEXT NOT NULL,PRIMARY KEY("id" AUTOINCREMENT))''',
+          '''CREATE TABLE $balanceTableName ("id"	INTEGER NOT NULL,"type"	TEXT NOT NULL,"amount"	NUMERIC NOT NULL DEFAULT 0,"date"	TEXT NOT NULL,"note"	TEXT,"user_id" INTEGER NOT NULL,"category" TEXT NOT NULL,PRIMARY KEY("id" AUTOINCREMENT))''',
         );
       },
       singleInstance: true,
@@ -42,10 +44,10 @@ class DbHelper{
     database.close();
   }
 
-  Future insertBudget(UserModel userModel) async{
+  Future insertBudget(BudgetModel budgetModel) async{
     var database = await openDatabase(dbName);
 
-    database.insert("balance", userModel.toJson());
+    database.insert("balance", budgetModel.toJson());
     // await database.execute('INSERT INTO "user"("name","number","date","password") VALUES ("abc","8869964","${DateTime.now()}","123456")');
     database.close();
   }
@@ -59,6 +61,13 @@ class DbHelper{
   }
 
   Future<List<Map<String,Object?>>?> getUser(String number,String pass) async{
-    return await database?.rawQuery("select * from $userTableName where number = $number and password = $pass");
+    var database = await openDatabase(dbName);
+    return await database.rawQuery("select * from $userTableName where number = $number and password = $pass");
+  }
+
+  Future<List<Map<String,Object?>>?> getBalance({bool income=false}) async{
+    var database = await openDatabase(dbName);
+    var type=income?'Income':'Expanse';
+    return await database.rawQuery("select * from $balanceTableName where type='$type'");
   }
 }

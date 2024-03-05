@@ -4,6 +4,7 @@ import 'package:budget_tracker/module/login/login_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 /*CREATE TABLE "balance" (
 	"id"	INTEGER NOT NULL,
@@ -17,10 +18,11 @@ import 'package:get/get.dart';
 //INSERT INTO "user"("name","number","username","password") VALUES ("abc","8869964","abc","123456");
 //UPDATE "user" SET "number"="123","name"="dipak" WHERE id = 1
 //DELETE FROM "user" WHERE username = "abc"
-
+final userId = 0.val('uid');
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
   await DbHelper().initDb();
+  await GetStorage.init();
   runApp(MyApp());
 }
 

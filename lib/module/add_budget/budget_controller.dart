@@ -1,3 +1,4 @@
+import 'package:budget_tracker/main.dart';
 import 'package:budget_tracker/module/add_budget/budget_model.dart';
 import 'package:budget_tracker/module/database/db_helper.dart';
 import 'package:budget_tracker/module/util/constant.dart';
@@ -27,11 +28,19 @@ class BudgetController extends GetxController {
       category.value = exCategory.first;
     }
   }
-  
-  void submit(){
-    DbHelper  db=DbHelper();
-    db.insertUserData(userModel)
-    
+
+  void submit() async{
+    DbHelper db = DbHelper();
+    await db.insertBudget(
+      BudgetModel(
+        date: DateTime.now().toString(),
+        type: type.value,
+        amount: double.tryParse(price.text)??0,
+        category: category.value,
+        userId:userId.val,
+      ),
+    );
+    price.clear();
   }
 
   TextEditingController price = TextEditingController();

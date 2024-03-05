@@ -111,7 +111,7 @@ class AddBudgetPage extends StatelessWidget {
               itemCount: controller.bmList.length,
               itemBuilder: (context, index) {
                 var bmList = controller.bmList[index];
-                return Text("${bmList.type}  ${bmList.price}");
+                return Text("${bmList.type}  ${bmList.amount}");
               },
             ),
           ))

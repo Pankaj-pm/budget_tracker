@@ -48,7 +48,7 @@ class HomePage extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              DbHelper helper = DbHelper();
+              // DbHelper helper = DbHelper();
               // helper.insertUserData(UserModel(
               //   name: "flutter",
               //   number: "569825330",
@@ -56,7 +56,9 @@ class HomePage extends StatelessWidget {
               //   password: "123456",
               // ));
               // helper.deleteUserData(1);
-              Get.to(AddBudgetPage());
+              await Get.to(AddBudgetPage());
+              controller.fetchBudgetData(true);
+              controller.fetchBudgetData(false);
             },
           ),
         );
@@ -68,34 +70,60 @@ class HomePage extends StatelessWidget {
 class Incomes extends StatelessWidget {
   List list = [];
 
+  var homeController = Get.find<HomeController>();
+
   Incomes({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (list.isEmpty) {
-      return Center(child: Text("No Data Found"));
-    }
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text("Income"),
-        );
+    // if (list.isEmpty) {
+    //   return Center(child: Text("No Data Found"));
+    // }
+    return RefreshIndicator(
+      onRefresh: () async {
+        homeController.fetchBudgetData(true);
       },
+      child: Obx(
+        () => ListView.builder(
+          itemCount: homeController.budgetList.length,
+          itemBuilder: (context, index) {
+            var budget = homeController.budgetList[index];
+            return ListTile(
+              title: Text(budget.category ?? ""),
+              trailing: Text("${budget.amount}"),
+            );
+          },
+        ),
+      ),
     );
   }
 }
 
 class Expanse extends StatelessWidget {
-  const Expanse({super.key});
+
+  List list = [];
+
+  var homeController = Get.find<HomeController>();
+  Expanse({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text("Expanse"),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        homeController.fetchBudgetData(false);
       },
+      child: Obx(
+            () => ListView.builder(
+          itemCount: homeController.expBudgetList.length,
+          itemBuilder: (context, index) {
+            var budget = homeController.expBudgetList[index];
+            return ListTile(
+              title: Text(budget.category ?? ""),
+              trailing: Text("${budget.amount}"),
+            );
+          },
+        ),
+      ),
     );
   }
 }
