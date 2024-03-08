@@ -6,19 +6,24 @@ import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   RxString name = "".obs;
+  RxString searchText = "".obs;
   RxInt count = 0.obs;
+  TextEditingController searchController=TextEditingController();
+  TextEditingController searchController2=TextEditingController();
   PageController pageController = PageController();
   RxList<BudgetModel> budgetList=<BudgetModel>[].obs;
   RxList<BudgetModel> expBudgetList=<BudgetModel>[].obs;
 
   @override
   void onInit() {
+    fetchBudgetData(true);
+    fetchBudgetData(false);
     super.onInit();
   }
 
-  void fetchBudgetData(bool isIncome) async {
+  void fetchBudgetData(bool isIncome,{String search=""}) async {
     DbHelper helper = DbHelper();
-    var data = await helper.getBalance(income: isIncome);
+    var data = await helper.getBalance(income: isIncome,search: search);
 
     if(isIncome){
       budgetList.value=data?.map((e) {

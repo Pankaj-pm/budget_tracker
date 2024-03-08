@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
               //   password: "123456",
               // ));
               // helper.deleteUserData(1);
-              await Get.to(AddBudgetPage());
+              await Get.to(()=>AddBudgetPage());
               controller.fetchBudgetData(true);
               controller.fetchBudgetData(false);
             },
@@ -79,31 +79,66 @@ class Incomes extends StatelessWidget {
     // if (list.isEmpty) {
     //   return Center(child: Text("No Data Found"));
     // }
-    return RefreshIndicator(
-      onRefresh: () async {
-        homeController.fetchBudgetData(true);
-      },
-      child: Obx(
-        () => ListView.builder(
-          itemCount: homeController.budgetList.length,
-          itemBuilder: (context, index) {
-            var budget = homeController.budgetList[index];
-            return ListTile(
-              title: Text(budget.category ?? ""),
-              trailing: Text("${budget.amount}"),
-            );
+    return Column(
+      children: [
+        TextFormField(
+          controller: homeController.searchController,
+          onChanged: (value) {
+            homeController.searchText.value = value;
+            homeController.fetchBudgetData(true,search: value);
+            print("val $value");
           },
+          decoration: InputDecoration(
+            suffixIcon: Obx(
+              () {
+                if (homeController.searchText.value.isEmpty) {
+                  return SizedBox.shrink();
+                }
+                return IconButton(
+                  onPressed: () {
+                    homeController.searchText.value = "";
+                    homeController.searchController.clear();
+                    homeController.fetchBudgetData(true);
+                  },
+                  icon: Icon(Icons.clear),
+                );
+              },
+            ),
+          ),
         ),
-      ),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              homeController.fetchBudgetData(true);
+            },
+            child: Obx(
+              () => ListView.builder(
+                itemCount: homeController.budgetList.length,
+                itemBuilder: (context, index) {
+                  var budget = homeController.budgetList[index];
+                  return ListTile(
+                    title: Text(budget.category ?? ""),
+                    trailing: Text("${budget.amount}"),
+                    onTap: () async{
+                      await Get.to(()=>AddBudgetPage(),arguments: budget);
+                      homeController.fetchBudgetData(true,search: homeController.searchController.text);
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
 class Expanse extends StatelessWidget {
-
   List list = [];
 
   var homeController = Get.find<HomeController>();
+
   Expanse({super.key});
 
   @override
@@ -113,12 +148,16 @@ class Expanse extends StatelessWidget {
         homeController.fetchBudgetData(false);
       },
       child: Obx(
-            () => ListView.builder(
+        () => ListView.builder(
           itemCount: homeController.expBudgetList.length,
           itemBuilder: (context, index) {
             var budget = homeController.expBudgetList[index];
             return ListTile(
               title: Text(budget.category ?? ""),
+              onTap: () async{
+                await Get.to(()=>AddBudgetPage(),arguments: budget);
+                homeController.fetchBudgetData(false);
+              },
               trailing: Text("${budget.amount}"),
             );
           },

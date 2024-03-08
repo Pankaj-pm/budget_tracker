@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:budget_tracker/module/add_budget/budget_model.dart';
 import 'package:budget_tracker/module/database/user_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -52,6 +54,14 @@ class DbHelper{
     database.close();
   }
 
+  Future updateBudget(BudgetModel budgetModel) async{
+    var database = await openDatabase(dbName);
+
+    database.update("balance", budgetModel.toJson(),where: "id = ?",whereArgs: [budgetModel.id]);
+
+    database.close();
+  }
+
   Future deleteUserData(int id) async{
     var database = await openDatabase(dbName);
 
@@ -65,9 +75,15 @@ class DbHelper{
     return await database.rawQuery("select * from $userTableName where number = $number and password = $pass");
   }
 
-  Future<List<Map<String,Object?>>?> getBalance({bool income=false}) async{
+  Future<List<Map<String,Object?>>?> getBalance({bool income=false,String search=""}) async{
     var database = await openDatabase(dbName);
     var type=income?'Income':'Expanse';
-    return await database.rawQuery("select * from $balanceTableName where type='$type'");
+
+    if(search.isEmpty){
+      return await database.rawQuery("select * from $balanceTableName where type='$type'");
+    }else{
+      return await database.rawQuery("select * from $balanceTableName where type='$type' and category like '%$search%'");
+    }
+
   }
 }
